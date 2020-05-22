@@ -35,6 +35,7 @@ id   [A-Za-z][A-Za-z0-9]*
 "float"      {strcpy(yylval.type_id,  yytext);return TYPE;}
 "char" 		 {strcpy(yylval.type_id,  yytext);return TYPE;}	
 "break"		 {return BREAK;}
+"continue"	{return CONTINUE;}
 "return"     {return RETURN;}
 "if"         {return IF;}
 "else"       {return ELSE;}
