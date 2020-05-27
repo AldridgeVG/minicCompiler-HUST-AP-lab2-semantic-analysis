@@ -61,33 +61,34 @@ extern int yydebug;
      RC = 270,
      SEMI = 271,
      COMMA = 272,
-     ASSIGNOP = 273,
-     PLUS = 274,
-     MINUS = 275,
-     STAR = 276,
-     DIV = 277,
-     AND = 278,
-     OR = 279,
-     DOT = 280,
-     NOT = 281,
-     STRUCT = 282,
-     RETURN = 283,
-     BREAK = 284,
-     CONTINUE = 285,
-     IF = 286,
-     ELSE = 287,
-     WHILE = 288,
-     FOR = 289,
-     SELFADD = 290,
-     SELFDEC = 291,
-     ADD_ASSIGNOP = 292,
-     MINUS_ASSIGNOP = 293,
-     STAR_ASSIGNOP = 294,
-     DIV_ASSIGNOP = 295,
-     UMINUS = 296,
-     LOWER_THAN_RB = 297,
-     LOWER_THEN_ELSE = 298,
-     ARRAY_FIRST = 299
+     BOOL = 273,
+     ASSIGNOP = 274,
+     PLUS = 275,
+     MINUS = 276,
+     STAR = 277,
+     DIV = 278,
+     AND = 279,
+     OR = 280,
+     DOT = 281,
+     NOT = 282,
+     STRUCT = 283,
+     RETURN = 284,
+     BREAK = 285,
+     CONTINUE = 286,
+     IF = 287,
+     ELSE = 288,
+     WHILE = 289,
+     FOR = 290,
+     SELFADD = 291,
+     SELFDEC = 292,
+     ADD_ASSIGNOP = 293,
+     MINUS_ASSIGNOP = 294,
+     STAR_ASSIGNOP = 295,
+     DIV_ASSIGNOP = 296,
+     UMINUS = 297,
+     LOWER_THAN_RB = 298,
+     LOWER_THEN_ELSE = 299,
+     ARRAY_FIRST = 300
    };
 #endif
 
@@ -106,7 +107,7 @@ typedef union YYSTYPE
 
 
 /* Line 2058 of yacc.c  */
-#line 110 "parser.tab.h"
+#line 111 "parser.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
