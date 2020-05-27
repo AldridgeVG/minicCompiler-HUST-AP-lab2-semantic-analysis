@@ -1679,7 +1679,7 @@ yyreduce:
         case 2:
 /* Line 1792 of yacc.c  */
 #line 49 "parser.y"
-    {display((yyvsp[(1) - (1)].ptr), 0);}
+    {/*display($1, 0);*/udisplay((yyvsp[(1) - (1)].ptr), 0);semantic_Analysis0((yyvsp[(1) - (1)].ptr));}
     break;
 
   case 3:
