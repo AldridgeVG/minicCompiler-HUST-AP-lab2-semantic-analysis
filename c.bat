@@ -1,5 +1,5 @@
 chcp 65001
 win_flex lex.l
 win_bison -d -v parser.y
-gcc -o e lex.yy.c parser.tab.c ast.c Analysis.c
-e test1.c
+gcc -o ana lex.yy.c parser.tab.c ast.c Analysis.c
+ana test1.c
