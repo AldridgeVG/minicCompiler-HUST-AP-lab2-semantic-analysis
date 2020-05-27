@@ -11,25 +11,25 @@ void prn_symbol()
     int i = 0;
    // printf("%6s %6s %6s  %6s %4s \n", "变量名", "别 名", "层 号", "类  型", "作用域");
     printf("+++++++++++++++++++++++++++++++++++++++++++++++\n");
-    printf("|%6s|%6s|%13s|%23s|\n", "变量名", "层 号", "类  型", "作用域");
+    printf("|%25s\t|%25s\t|%25s\t|%25s\t|\n", "变量名", "层 号", "类  型", "作用域");
     printf("+++++++++++++++++++++++++++++++++++++++++++++++\n");
     //,"偏移量"
     for (i = 0; i < symbolTable.index; i++)
     {
         if(!strcmp(symbolTable.symbols[i].name,""))
             continue;
-        printf("|%6s", symbolTable.symbols[i].name);
-        printf("|%6d", symbolTable.symbols[i].level);
+        printf("|%25s\t", symbolTable.symbols[i].name);
+        printf("|%25d\t", symbolTable.symbols[i].level);
         switch(symbolTable.symbols[i].type)
         {
-            case INT:if(symbolTable.symbols[i].flag!='A'){printf("|%10s", "int");break;}else{printf("|%10s", "int[]");break;}
-            case FLOAT:if(symbolTable.symbols[i].flag!='A'){printf("|%10s", "float");break;}else{printf("|%10s", "float[]");break;}
-            case CHAR:if(symbolTable.symbols[i].flag!='A'){printf("|%10s", "char");break;}else{printf("|%10s", "char[]");break;}
+            case INT:if(symbolTable.symbols[i].flag!='A'){printf("|%25s\t", "int");break;}else{printf("|%25s\t", "int[]");break;}
+            case FLOAT:if(symbolTable.symbols[i].flag!='A'){printf("|%25s\t", "float");break;}else{printf("|%25s\t", "float[]");break;}
+            case CHAR:if(symbolTable.symbols[i].flag!='A'){printf("|%25s\t", "char");break;}else{printf("|%25s\t", "char[]");break;}
         }
         if(symbolTable.symbols[i].flag=='F')
-            printf("|%20s|\n", "Func Name");
+            printf("|%25s\t|\n", "Func Name");
         else
-            printf("|%20s|\n", symbolTable.symbols[i].scope);
+            printf("|%25s\t|\n", symbolTable.symbols[i].scope);
     } 
     printf("+++++++++++++++++++++++++++++++++++++++++++++++\n");
     

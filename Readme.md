@@ -1,6 +1,6 @@
 运行环境：
 操作系统 Windows 10 专业版
-flex 2.5.4
-bison 2.4.1
+win_flex 2.6.4
+win_bison 2.7
 gcc 9.2
 命令已编写为脚本，执行bat运行即可

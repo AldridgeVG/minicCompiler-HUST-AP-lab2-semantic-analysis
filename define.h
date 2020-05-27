@@ -45,6 +45,7 @@ struct opn{
     int offset;                 //变量单元偏移量，或函数在符号表的定义位置序号，目标代码生成时用
 };
 
+//符号表的行
 struct symbol{  
     char name[33];     //变量或函数名
     int level;   //层号，外部变量名或函数名层号为0，形参名为1，每到1个复合语句层号加1，退出减1
@@ -55,7 +56,7 @@ struct symbol{
     char scope[50];
 };
 
-//符号表，是一个顺序栈，index初值为0
+//符号表（顺序栈），index初值为0
 struct symboltable{
     struct symbol symbols[MAXLENGTH];
     int index;
