@@ -35,6 +35,13 @@ int main(){
     p[1.5] = 10;    //错误类型12，数组访问操作符中出现非整数
     p[2] = 'A';
 
+    for(a=1,kk=1;a<10;a++){
+        kk++;
+        continue;
+    }
+    continue;
+    break;
+
     return d;       //错误类型8，返回值类型不匹配
 }
 

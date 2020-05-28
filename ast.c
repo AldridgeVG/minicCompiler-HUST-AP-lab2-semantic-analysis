@@ -322,6 +322,10 @@ void display(struct node *T, int indent)
         }
     }
 }
+
+//用于显示符号表的语法树，确定作用域并显示
+//paraCnt用于防止函数带有多个参数时paralist嵌套定义带来错误
+int paraCnt = 0;
 void udisplay(struct node *T, int indent)
 {
     if (T)
@@ -382,11 +386,15 @@ void udisplay(struct node *T, int indent)
             }
             break;
         case FUNC_PARAM_LIST:
-            strcpy(T->scope,"Para of ");
+            if(paraCnt == 0){
+                strcpy(T->scope,"Para of ");
+                paraCnt++;
+            }
             strcat(T->scope,T->parent->scope);
             //printf("******* %s %s\n", T->scope,T->type_id);
             udisplay(T->ptr[0], indent); //依次显示参数类型和名称
             udisplay(T->ptr[1], indent);
+            paraCnt--;
             break;
         case FUNC_PARAM_DEC:
             strcpy(T->scope,T->parent->scope);
