@@ -261,6 +261,8 @@ void semantic_Analysis(struct node *T) {
         strcpy(result.id, symbolTable.symbols[rtn].alias);
         result.offset = T->offset;
         break;
+    
+      //每次进入复合语句，打应一次----当前-----符号表
       case COMP_STM:
         LEV++;
         //设置层号加1，并且保存该层局部变量在符号表中的起始位置在symbol_scope_TX
@@ -272,6 +274,7 @@ void semantic_Analysis(struct node *T) {
           T->ptr[1]->break_num = T->break_num;
           semantic_Analysis(T->ptr[1]);  //处理复合语句的语句序列
         }
+        //打印符号表
         prn_symbol();
         LEV--;
         symbolTable.index =
@@ -415,12 +418,12 @@ void semantic_Analysis(struct node *T) {
           semantic_error(T->pos, "返回值类型不允许为空", "");
         }
         break;
-      case ID:
-      case ARRAY:
-      case INT:
+      case ID:                  //暂未指定错误类型
+      case ARRAY:           //VAR_DEF
+      case INT:             
       case FLOAT:
       case CHAR:
-      case ASSIGNOP:
+      case ASSIGNOP:    //
       case AND:
       case OR:
       case RELOP:
@@ -439,7 +442,10 @@ void semantic_Analysis(struct node *T) {
       case FUNC_CALL:
       case ARRAY_CALL:
       case ARGS:
-      case BREAK:
+      case _BREAK:
+        Exp(T);  //处理基本表达式
+        break;
+      case _CONTINUE:
         Exp(T);  //处理基本表达式
         break;
     }
@@ -785,12 +791,12 @@ void Exp(struct node *T) {
         }
 
         break;
-      case CONTINUE:
+      case _CONTINUE:
         if (T->break_num != 1) {
           semantic_error(T->pos, T->type_id, "continue不允许在这个地方出现");
         }
         break;
-      case BREAK:
+      case _BREAK:
         if (T->break_num != 1) {
           semantic_error(T->pos, T->type_id, "break不允许在这个地方出现");
         }

@@ -36,6 +36,11 @@ int main(){
     p[2] = 'A';
 
     for(a=1,kk=1;a<10;a++){
+        int c1=0;
+        c1=c1++;
+        for(c=1;c<5;c++){
+            int c2=3;
+        }
         kk++;
         continue;
     }
