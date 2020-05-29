@@ -191,7 +191,10 @@ int match_param(int i, struct node *T) {
   return 1;
 }
 
-//对抽象语法树的先根遍历,按display的控制结构修改完成符号表管理和语义检查
+//对抽象语法树的先根遍历,按udisplay的控制结构修改完成符号表管理和语义检查
+
+struct node * curFunc;
+
 void semantic_Analysis(struct node *T) {
   int rtn, num, width;
   struct node *T0;
@@ -222,8 +225,15 @@ void semantic_Analysis(struct node *T) {
         semantic_Analysis(
             T->ptr[1]);  //处理函数名和参数结点部分，这里不考虑用寄存器传递参数
         T->ptr[2]->break_num = 0;
-
+        T->ptr[2]->return_num=0;
+        
+        curFunc = T;
         semantic_Analysis(T->ptr[2]);  //处理函数体结点
+
+        if(curFunc->ptr[2]->return_num == 0){
+          semantic_error(T->pos, T->type_id, "函数无返回语句");                                                         //17.函数没有返回语句
+        }
+
         //计算活动记录大小,这里offset属性存放的是活动记录大小，不是偏移
         break;
       case FUNC_DEC:  //根据返回类型，函数名填写符号表,，，此时是函数定义
@@ -407,6 +417,7 @@ void semantic_Analysis(struct node *T) {
         semantic_Analysis(T->ptr[1]);
         break;
       case RETURN:
+        curFunc->ptr[2]->return_num = 1;
         if (T->ptr[0]) {
           Exp(T->ptr[0]);
           num = symbolTable.index;

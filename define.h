@@ -29,6 +29,7 @@ struct node{
     int num;        //记录子结点个数（包括自己）
     int offset;     //偏移量
 
+    int return_num;
     int break_num;
 };
 

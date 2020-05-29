@@ -5,7 +5,7 @@ int func(int i, int y) { return i; }
 int func() {  //错误类型3，名称的重复定义
   return 0;
 }
-int func1(){}//错误类型17，函数没有返回语句
+int func1(){} //错误类型17，函数没有返回语句
 int main() {
   // this is a test
   int i;
