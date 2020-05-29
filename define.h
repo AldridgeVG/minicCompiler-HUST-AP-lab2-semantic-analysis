@@ -48,9 +48,9 @@ struct opn{
 //符号表的行
 struct symbol{  
     char name[33];     //变量或函数名
-    int level;   //层号，外部变量名或函数名层号为0，形参名为1，每到1个复合语句层号加1，退出减1
+    int level;              //层号，外部变量名或函数名层号为0，形参名为1，每到1个复合语句层号加1，退出减1
     int type;           //变量类型 或 函数返回值类型
-    int  paramnum;    //形参个数
+    int  paramnum;    //形参个数     
     char alias[10];      //别名，为解决嵌套层次使用，使得每一个数据名称唯一
     char flag;          //符号标记，函数：'F'  变量：'V'   参数：'P'  临时变量：'T'
     char scope[50];
