@@ -417,6 +417,7 @@ void semantic_Analysis(struct node *T) {
         semantic_Analysis(T->ptr[1]);
         break;
       case RETURN:
+      //curFunc永远指向当前函数名的节点，直接修改表示已存在返回语句
         curFunc->ptr[2]->return_num = 1;
         if (T->ptr[0]) {
           Exp(T->ptr[0]);
