@@ -76,15 +76,16 @@ int fillSymbolTable(char *name, char *alias, int level, int type, char flag,
        symbolTable.symbols[i].level == level || (level == 0 && i >= 0); i--) {
     if (level == 0 && symbolTable.symbols[i].level == 1)
       continue;  //外部变量和形参不必比较重名
+    //重名返回-1
     if (!strcmp(symbolTable.symbols[i].name, name)) return -1;
   }
   //填写符号表内容
-  strcpy(symbolTable.symbols[symbolTable.index].name, name);
-  strcpy(symbolTable.symbols[symbolTable.index].alias, alias);
-  strcpy(symbolTable.symbols[symbolTable.index].scope, scope);
-  symbolTable.symbols[symbolTable.index].level = level;
-  symbolTable.symbols[symbolTable.index].type = type;
-  symbolTable.symbols[symbolTable.index].flag = flag;
+  strcpy(symbolTable.symbols[symbolTable.index].name, name);      //名
+  strcpy(symbolTable.symbols[symbolTable.index].alias, alias);          //别名
+  strcpy(symbolTable.symbols[symbolTable.index].scope, scope);     //作用域
+  symbolTable.symbols[symbolTable.index].level = level;                  //层号
+  symbolTable.symbols[symbolTable.index].type = type;                  //类型
+  symbolTable.symbols[symbolTable.index].flag = flag;                    //标记
   return symbolTable
       .index++;  //返回的是符号在符号表中的位置序号，中间代码生成时可用序号取到符号别名
 }
@@ -99,6 +100,7 @@ int fill_Temp(char *name, int level, int type, char flag, char *scope) {
   symbolTable.symbols[symbolTable.index].flag = flag;
   return symbolTable.index++;  //返回的是临时变量在符号表中的位置序号
 }
+
 char *strcats(char *s1, char *s2) {
   static char result[10];
   strcpy(result, s1);
@@ -106,12 +108,14 @@ char *strcats(char *s1, char *s2) {
   return result;
 }
 
+//创建v1-v10别名
 char *createAlias() {
   static int no = 1;
   char s[10];
   itoa(no++, s, 10);
   return strcats("v", s);
 }
+
 char *createTemp() {
   static int no = 1;
   char s[10];
@@ -137,7 +141,7 @@ void ext_var_list(struct node *T) {
       rtn = fillSymbolTable(T->type_id, createAlias(), LEV, T->type, 'V',
                             T->scope);  //最后一个变量名
       if (rtn == -1)
-        semantic_error(T->pos, T->type_id, "变量重复定义");
+        semantic_error(T->pos, T->type_id, "变量重复定义");                                                               //3. 重复变量名称
       else {
         T->place = rtn;
         T->num = 1;
@@ -148,7 +152,7 @@ void ext_var_list(struct node *T) {
       rtn = fillSymbolTable(T->type_id, createAlias(), LEV, T->type, 'A',
                             T->scope);  //最后一个变量名
       if (rtn == -1)
-        semantic_error(T->pos, T->type_id, "变量名重复定义");
+        semantic_error(T->pos, T->type_id, "变量名重复定义");                                                             //3.重复数组变量名称
       else if (T->size <= 0) {
         semantic_error(T->pos, T->type_id, "数组大小不能为负值或0");
       } else {
@@ -167,14 +171,15 @@ int match_param(int i, struct node *T) {
   //形参个数为0
   if (num == 0 && T == NULL) return 1;
   for (j = 1; j <= num; j++) {
+    //必须严格满足参数个数
     if (!T) {
-      semantic_error(pos, "", "函数调用参数太少");
+      semantic_error(pos, "", "函数调用参数太少");                                                                        //6. 参数不匹配系列
       return 0;
     }
     type1 = symbolTable.symbols[i + j].type;  //形参类型
     type2 = T->ptr[0]->type;                  //实参类型
     if (type1 != type2) {
-      semantic_error(pos, "", "参数类型不匹配");
+      semantic_error(pos, "", "参数类型不匹配");                                                                           //7. 实参形参类型不匹配
       return 0;
     }
     T = T->ptr[1];
@@ -226,7 +231,7 @@ void semantic_Analysis(struct node *T) {
                               T->scope);  //函数不在数据区中分配单元，偏移量为0
 
         if (rtn == -1) {
-          semantic_error(T->pos, T->type_id, "函数名重复定义");
+          semantic_error(T->pos, T->type_id, "函数名重复定义");                                                           //3. 重复函数名称
           break;
         } else
           T->place = rtn;
@@ -253,7 +258,7 @@ void semantic_Analysis(struct node *T) {
         rtn = fillSymbolTable(T->ptr[1]->type_id, createAlias(), 1,
                               T->ptr[0]->type, 'P', T->scope);
         if (rtn == -1)
-          semantic_error(T->ptr[1]->pos, T->ptr[1]->type_id, "参数名重复定义");
+          semantic_error(T->ptr[1]->pos, T->ptr[1]->type_id, "参数名重复定义");                                 //3. 重复参数名称
         else
           T->ptr[1]->place = rtn;
         T->num = 1;  //参数个数计算的初始值
@@ -409,7 +414,7 @@ void semantic_Analysis(struct node *T) {
             num--;
           } while (symbolTable.symbols[num].flag != 'F');
           if (T->ptr[0]->type != symbolTable.symbols[num].type) {
-            semantic_error(T->pos, "返回值类型错误", "");
+            semantic_error(T->pos, "返回值类型错误", "");                                                 //16. 返回值类型不匹配
             break;
           }
           result.kind = ID;
@@ -462,11 +467,11 @@ void Exp(struct node *T) {
       case ID:  //查符号表，获得符号表中的位置，类型送type
         rtn = searchSymbolTable(T->type_id);
         if (rtn == -1)
-          semantic_error(T->pos, T->type_id, "变量未定义");
+          semantic_error(T->pos, T->type_id, "变量未定义");                                                           //1. 变量未定义
         else if (symbolTable.symbols[rtn].flag == 'F')
           semantic_error(T->pos, T->type_id, "是函数名，类型不匹配");
         else if (symbolTable.symbols[rtn].flag == 'A')
-          semantic_error(T->pos, T->type_id, "是数组变量,不匹配");
+          semantic_error(T->pos, T->type_id, "是数组变量,不匹配");                                                 
         else {
           T->place = rtn;  //结点保存变量在符号表中的位置
           T->type = symbolTable.symbols[rtn].type;
@@ -480,7 +485,7 @@ void Exp(struct node *T) {
         else if (symbolTable.symbols[rtn].flag == 'F')
           semantic_error(T->pos, T->type_id, "是函数名，不匹配");
         else if (symbolTable.symbols[rtn].flag == 'V')
-          semantic_error(T->pos, T->type_id, "不是数组变量");
+          semantic_error(T->pos, T->type_id, "不是数组变量");                                                       //8. 下标访问非数组
         else {
           T->place = rtn;  //结点保存变量在符号表中的位置
           T->type = symbolTable.symbols[rtn].type;
@@ -517,7 +522,7 @@ void Exp(struct node *T) {
       case ASSIGNOP:
         if (T->ptr[0]->nodeKind != ID && T->ptr[0]->nodeKind != ARRAY_CALL &&
             T->ptr[0]->nodeKind != ARRAY) {
-          semantic_error(T->pos, "", "赋值语句需要左值");
+          semantic_error(T->pos, "", "赋值语句需要左值");                                                                             //12. 赋值号左边非左值（var/arr/arr[]）
         } else {
           Exp(T->ptr[0]);  //处理左值，例中仅为变量
           Exp(T->ptr[1]);
@@ -670,24 +675,39 @@ void Exp(struct node *T) {
         Exp(T->ptr[0]);
         T->type = T->ptr[0]->type;
         break;
+
+        //自增自减非左值判断在词法分析阶段
       case SELFADD:
         if (T->ptr[0]) {
+          if (T->ptr[0]->nodeKind != ID && T->ptr[0]->nodeKind != ARRAY_CALL) {
+          semantic_error(T->pos, "", "自增语句需要左值");                                                                             //13. 自增语句需要左值（var/arr/arr[]）
+        } 
           Exp(T->ptr[0]);
           T->type = T->ptr[0]->type;
         } else if (T->ptr[1]) {
+          if (T->ptr[1]->nodeKind != ID && T->ptr[1]->nodeKind != ARRAY_CALL) {
+          semantic_error(T->pos, "", "自增语句需要左值");                                                                             //13. 自增语句需要左值（var/arr/arr[]）
+        } 
           Exp(T->ptr[1]);
           T->type = T->ptr[1]->type;
         }
         break;
       case SELFDEC:
         if (T->ptr[0]) {
+          if (T->ptr[0]->nodeKind != ID && T->ptr[0]->nodeKind != ARRAY_CALL) {
+          semantic_error(T->pos, "", "自减语句需要左值");                                                                             //13. 自减语句需要左值（var/arr/arr[]）
+        } 
           Exp(T->ptr[0]);
           T->type = T->ptr[0]->type;
         } else if (T->ptr[1]) {
+           if (T->ptr[1]->nodeKind != ID && T->ptr[1]->nodeKind != ARRAY_CALL) {
+          semantic_error(T->pos, "", "自减语句需要左值");                                                                             //13. 自减语句需要左值（var/arr/arr[]）
+        } 
           Exp(T->ptr[1]);
           T->type = T->ptr[1]->type;
         }
         break;
+
       case ADD_ASSIGNOP:
         Exp(T->ptr[0]);
         Exp(T->ptr[1]);
@@ -739,10 +759,10 @@ void Exp(struct node *T) {
       case FUNC_CALL:  //根据T->type_id查出函数的定义，如果语言中增加了实验教材的read，write需要单独处理一下
         rtn = searchSymbolTable(T->type_id);
         if (rtn == -1) {
-          semantic_error(T->pos, T->type_id, "函数未定义");
+          semantic_error(T->pos, T->type_id, "函数未定义");                                                                           //2.函数未定义
           break;
         } else if (symbolTable.symbols[rtn].flag != 'F') {
-          semantic_error(T->pos, T->type_id, "不是一个函数");
+          semantic_error(T->pos, T->type_id, "不是一个函数");                                                                        //4.调用非函数名
           break;
         }
         T->type = symbolTable.symbols[rtn].type;
@@ -775,7 +795,7 @@ void Exp(struct node *T) {
           semantic_error(T->pos, T->type_id, "数组未定义");
           break;
         } else if (symbolTable.symbols[rtn].flag == 'F') {
-          semantic_error(T->pos, T->type_id, "是函数名，类型不匹配");
+          semantic_error(T->pos, T->type_id, "是函数名，类型不匹配");                                         //5. 不正确使用函数名
           break;
         } else if (symbolTable.symbols[rtn].flag == 'V') {
           semantic_error(T->pos, T->type_id, "不是数组变量名，不匹配");
@@ -786,19 +806,19 @@ void Exp(struct node *T) {
         Exp(T->ptr[0]);  //处理所有实参表达式求值，及类型
         T0 = T->ptr[0];
         if (T0->type != INT) {
-          semantic_error(T->pos, T0->type_id, "数组下标非整型");
+          semantic_error(T->pos, T0->type_id, "数组下标非整型");                                                  //9. 数组下标不是INT
           break;
         }
 
         break;
       case _CONTINUE:
         if (T->break_num != 1) {
-          semantic_error(T->pos, T->type_id, "continue不允许在这个地方出现");
+          semantic_error(T->pos, T->type_id, "continue不允许在这个地方出现");                               //19. continue位置非法
         }
         break;
       case _BREAK:
         if (T->break_num != 1) {
-          semantic_error(T->pos, T->type_id, "break不允许在这个地方出现");
+          semantic_error(T->pos, T->type_id, "break不允许在这个地方出现");                                    //19. break位置非法
         }
         break;
       case ARGS:  //此处仅处理各实参表达式的求值的代码序列，不生成ARG的实参系列
@@ -836,7 +856,7 @@ void boolExp(struct node *T) {
         if (rtn == -1) {
           semantic_error(T->pos, T->type_id, "变量未定义");
         } else if (symbolTable.symbols[rtn].flag == 'F') {
-          semantic_error(T->pos, T->type_id, "是函数名，类型不匹配");
+          semantic_error(T->pos, T->type_id, "是函数名，类型不匹配");                                 //5. 不正确使用函数名
         } else if (symbolTable.symbols[rtn].flag == 'A') {
           semantic_error(T->pos, T->type_id, "是数组变量名，类型不匹配");
         } else {
@@ -855,7 +875,7 @@ void boolExp(struct node *T) {
         if (rtn == -1)
           semantic_error(T->pos, T->type_id, "数组未定义");
         else if (symbolTable.symbols[rtn].flag == 'F')
-          semantic_error(T->pos, T->type_id, "是函数名，不匹配");
+          semantic_error(T->pos, T->type_id, "是函数名，不匹配");                                             //5. 不正确使用函数名
         else if (symbolTable.symbols[rtn].flag == 'V')
           semantic_error(T->pos, T->type_id, "不是数组变量");
         else {
