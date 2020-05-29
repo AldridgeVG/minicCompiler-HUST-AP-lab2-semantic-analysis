@@ -231,7 +231,7 @@ void semantic_Analysis(struct node *T) {
         semantic_Analysis(T->ptr[2]);  //处理函数体结点
 
         if(curFunc->ptr[2]->return_num == 0){
-          semantic_error(T->pos, T->type_id, "函数无返回语句");                                                         //17.函数没有返回语句
+          semantic_error(T->pos, T->ptr[1]->type_id, "函数无返回语句");                                                         //17.函数没有返回语句
         }
 
         //计算活动记录大小,这里offset属性存放的是活动记录大小，不是偏移
