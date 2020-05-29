@@ -261,7 +261,7 @@ void semantic_Analysis(struct node *T) {
         strcpy(result.id, symbolTable.symbols[rtn].alias);
         result.offset = T->offset;
         break;
-    
+
       //每次进入复合语句，打应一次----当前-----符号表
       case COMP_STM:
         LEV++;
@@ -418,12 +418,12 @@ void semantic_Analysis(struct node *T) {
           semantic_error(T->pos, "返回值类型不允许为空", "");
         }
         break;
-      case ID:                  //暂未指定错误类型
-      case ARRAY:           //VAR_DEF
-      case INT:             
+      case ID:     //暂未指定错误类型
+      case ARRAY:  // VAR_DEF
+      case INT:
       case FLOAT:
       case CHAR:
-      case ASSIGNOP:    //
+      case ASSIGNOP:  //
       case AND:
       case OR:
       case RELOP:

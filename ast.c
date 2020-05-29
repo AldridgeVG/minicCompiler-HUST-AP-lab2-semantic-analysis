@@ -340,7 +340,7 @@ void udisplay(struct node *T, int indent) {
         udisplay(T->ptr[1], indent + 3);  //显示全局变量列表
         break;
       case EXT_DEF_FUNC:
-
+        //函数名作为作用域
         strcpy(T->scope, T->ptr[1]->type_id);
         udisplay(T->ptr[0], indent + 3);  //显示函数返回类型
         udisplay(T->ptr[1], indent + 3);  //显示函数名和参数
@@ -380,6 +380,7 @@ void udisplay(struct node *T, int indent) {
         }
         break;
       case FUNC_PARAM_LIST:
+        //防止多参数时出现多个paraof
         if (paraCnt == 0) {
           strcpy(T->scope, "Para of ");
           paraCnt++;
