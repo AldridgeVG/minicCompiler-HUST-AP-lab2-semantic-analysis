@@ -691,7 +691,7 @@ void Exp(struct node *T) {
         //自增自减非左值判断在词法分析阶段
       case SELFADD:
         if (T->ptr[0]) {
-          if (T->ptr[0]->nodeKind != ID && T->ptr[0]->nodeKind != ARRAY_CALL) {
+          if (T->ptr[0]->nodeKind != ID && T->ptr[0]->nodeKind != ARRAY_CALL && T->ptr[0]->nodeKind != ARRAY) {
           semantic_error(T->pos, "", "自增语句需要左值");                                                                             //13. 自增语句需要左值（var/arr/arr[]）
         } 
           Exp(T->ptr[0]);
